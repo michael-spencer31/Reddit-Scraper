@@ -20,18 +20,25 @@ class redditCommentScraper:
                                   user_agent='Web Scrap')
 
     def getComments(self):
+
+        # get the name of the subreddit we are going to scrap 
         subredditname = self.sub 
 
         subreddit = self.reddit.subreddit(subredditname)
         top_subbreddit = subreddit.top()
         count = 0
-        max = 1000
+
+        # change this value for how many comments you want to scrap
+        # note that for any value much > 1000 it will take a while to run
+        max = 3000
+
         print('auth success')
         words = []
         wordCount = {}
 
         # list of common words- we ignore these in our count
-        commonWords = {'it','then', 'that','this','and','of','the','for','I','it','has','in',
+        # add or remove words from here to adjust output
+        commonWords = {'Python', 'it', 'It', 'odd', 'then', 'that','this','and','of','the','for','I','it','has','in',
         'you','to','was','but','have','they','a','is','','be','on','are','an','or',
         'at','as','do','if','your','not','can','my','their','them','they','with',
         'at','about','would','like','there','You','from','get','just','more','so',
@@ -114,6 +121,7 @@ class redditImageScraper:
 
         print("Starting to scrap. This make take a few seconds depending on how many images you want.")
         images = []
+
         try:
             go = 0
 
@@ -150,6 +158,7 @@ class redditImageScraper:
 
 def main():
 
+    # print out options menu
     print("Welcome to my Web Scraper!")
     subreddit = input( "Which subreddit would you like to scrap?")
     images = int(input("How many images would you like to get?"))
@@ -157,8 +166,8 @@ def main():
     scraper = redditImageScraper(subreddit, images, thread)
 
     commentscraper = redditCommentScraper(subreddit, images)
-    # commentscraper.getComments()
-    scraper.start()
+    commentscraper.getComments()
+    # scraper.start()
 
 if __name__ == '__main__':
     main()
