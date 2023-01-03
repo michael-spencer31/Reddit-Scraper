@@ -5,6 +5,7 @@ import praw
 import configparser
 import concurrent.futures
 import argparse
+import pandas as pd
 import matplotlib.pyplot as plt
 
 class redditCommentScraper:
@@ -118,6 +119,19 @@ class redditImageScraper:
                                   client_secret=config['REDDIT']['client_secret'],
                                   user_agent='Web Scrap')
 
+    # this function get information about the posts on a subreddit and loads the data in a pandas dataframe
+    def getPosts(self):
+
+        posts = []
+
+        top_posts = self.reddit.subreddit(self.sub).top(limit=self.limit)
+
+        for post in top_posts:
+            posts.append([post.title, post.score, post.id, post.subreddit])
+        
+        posts = pd.DataFrame(posts,columns=['title', 'score', 'id', 'subreddit'])
+        print(posts)
+
     def download(self, image):
         r = requests.get(image['url'])
         with open(image['fname'], 'wb') as f:
@@ -170,7 +184,7 @@ def main():
     # print out options menu
     print("Welcome to my Web Scraper!")
     subreddit = input( "Which subreddit would you like to scrap?")
-    option = input("What would you like to scrap? (comments/images)")
+    option = input("What would you like to scrap? (comments/images/posts)")
 
     if option == 'comments':
         commentscraper = redditCommentScraper(subreddit)
@@ -183,6 +197,11 @@ def main():
         # create the scraper objects to use
         scraper = redditImageScraper(subreddit, images, thread)
         scraper.start()
+        # scraper.start()
+    elif option == 'posts' or option == 'post':
+        postnumber = int(input("How many posts would you like to get?"))
+        scraper = redditImageScraper(subreddit, postnumber, 'top')
+        scraper.getPosts()
     else:
         print("Invalid option")
 
