@@ -8,10 +8,11 @@ import argparse
 import matplotlib.pyplot as plt
 
 class redditCommentScraper:
-    def __init__(self, sub, limit):
+
+    def __init__(self, sub):
+
         config = configparser.ConfigParser()
         config.read('conf.ini')
-        self.limit = limit
         self.sub = sub
 
         # use the praw api and import the users key and secret keys 
@@ -30,7 +31,7 @@ class redditCommentScraper:
 
         # change this value for how many comments you want to scrap
         # note that for any value much > 1000 it will take a while to run
-        max = 3000
+        max = 1000
 
         print('auth success')
         words = []
@@ -62,6 +63,7 @@ class redditCommentScraper:
                     if(letter == ' '):
                         if(word and not word[-1].isalnum()):
                             word = word[:-1]
+                        # check if the word is in our list of common words
                         if not word in commonWords:
                             words.append(word)
                         word = ""
@@ -87,19 +89,23 @@ class redditCommentScraper:
             keyCount.append(wordCount[entry])
             amount += 1
 
+            # edit this value to change the number of comments in the graph
             if(amount == 10):
                 break
 
         labels = keyWords
         sizes = keyCount
 
+        # create a pie chart using matplot to display comment results 
         plt.title('Top Comments for: r/' + subredditname)
         plt.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
         plt.axis('equal')
         plt.show()
 
 class redditImageScraper:
+
     def __init__(self, sub, limit, order):
+
         config = configparser.ConfigParser()
         config.read('conf.ini')
         self.sub = sub
@@ -125,7 +131,7 @@ class redditImageScraper:
         try:
             go = 0
 
-            # how will we sort the posts
+            # how will we sort the posts (either by hot, top or new posts)
             if self.order == 'hot':
                 submissions = self.reddit.subreddit(self.sub).hot(limit=None)
             elif self.order == 'top':
@@ -134,6 +140,8 @@ class redditImageScraper:
                 submissions = self.reddit.subreddit(self.sub).new(limit=None)
 
             for submission in submissions:
+
+                # make sure the submission is a image of some type
                 if not submission.stickied and submission.url.endswith(('jpg', 'jpeg', 'png' , 'gif')) :
                     
                     fname = self.path + re.search('(?s:.*)\w/(.*)', submission.url).group(1)
@@ -156,18 +164,27 @@ class redditImageScraper:
         except Exception as e:
             print(e)
 
+# main method
 def main():
 
     # print out options menu
     print("Welcome to my Web Scraper!")
     subreddit = input( "Which subreddit would you like to scrap?")
-    images = int(input("How many images would you like to get?"))
-    thread = input("Which thread would you like? (new/top/hot)")
-    scraper = redditImageScraper(subreddit, images, thread)
+    option = input("What would you like to scrap? (comments/images)")
 
-    commentscraper = redditCommentScraper(subreddit, images)
-    commentscraper.getComments()
-    # scraper.start()
+    if option == 'comments':
+        commentscraper = redditCommentScraper(subreddit)
+        commentscraper.getComments()
+    elif option == 'images':
+
+        images = int(input("How many images would you like to get?"))
+        thread = input("Which thread would you like? (new/top/hot)")
+
+        # create the scraper objects to use
+        scraper = redditImageScraper(subreddit, images, thread)
+        scraper.start()
+    else:
+        print("Invalid option")
 
 if __name__ == '__main__':
     main()
