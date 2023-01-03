@@ -8,3 +8,10 @@ This is a graph of the 10 most used words in comments on the r/python subreddit.
 
 ![Alt text](/RedditScrap.png?raw=true "")
 
+# Usage
+
+You will need to get a client ID and secret from Reddit. Replace XXXXX in conf.ini with your codes and run
+
+```
+python3 scraper.py
+```
