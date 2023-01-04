@@ -127,9 +127,9 @@ class redditImageScraper:
         top_posts = self.reddit.subreddit(self.sub).top(limit=self.limit)
 
         for post in top_posts:
-            posts.append([post.title, post.score, post.id, post.subreddit])
+            posts.append([post.title, post.score, post.id])
         
-        posts = pd.DataFrame(posts,columns=['title', 'score', 'id', 'subreddit'])
+        posts = pd.DataFrame(posts,columns=['title', 'score', 'id'])
         print(posts)
 
     def download(self, image):
@@ -182,7 +182,7 @@ class redditImageScraper:
 def main():
 
     # print out options menu
-    print("Welcome to my Web Scraper!")
+    print("Welcome to my Reddit Scraper!")
     subreddit = input( "Which subreddit would you like to scrap?")
     option = input("What would you like to scrap? (comments/images/posts)")
 
@@ -197,7 +197,6 @@ def main():
         # create the scraper objects to use
         scraper = redditImageScraper(subreddit, images, thread)
         scraper.start()
-        # scraper.start()
     elif option == 'posts' or option == 'post':
         postnumber = int(input("How many posts would you like to get?"))
         scraper = redditImageScraper(subreddit, postnumber, 'top')
