@@ -15,3 +15,4 @@ You will need to get a client ID and secret from Reddit. Replace XXXXX in conf.i
 ```
 python3 scraper.py
 ```
+Then, simply follow the instructions the command prompt will give you. If you download pictures, they will be found in a folder with the same name as the subreddit you selected. 
